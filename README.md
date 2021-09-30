@@ -1,1 +1,1 @@
-# Single vendor ecommerce system with react laravel tailwindCSS
+# Single vendor ecommerce system with react, laravel and tailwindCSS
