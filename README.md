@@ -1,1 +1,1 @@
-# single_vendor_ecommerce_system_with_react_laravel_tailwindCSS
+# Single vendor ecommerce system with react laravel tailwindCSS
