@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +32,11 @@ Route::group([
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
+    Route::post('signup', 'AuthController@register');
     Route::post('me', 'AuthController@me');
 
 });
+
+Route::resource('order',    CartController::class);
+Route::resource('cart',     OrderController::class);
+Route::resource('product',  ProductController::class);
