@@ -86,13 +86,10 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
 
-        if(auth()->user()->is_admin){
-            return $this->helper->destroy($product);
-        }
+        $response = !auth()->user()->is_admin
+                    ? response()->json(['message' => 'oops somthing went wrong !!!'],401)
+                    : $this->helper->destroy($product);
 
-        return json_encode([
-            'message' => 'oops somthing went wrong !!!'
-        ]);
-
+        return $response;
     }
 }

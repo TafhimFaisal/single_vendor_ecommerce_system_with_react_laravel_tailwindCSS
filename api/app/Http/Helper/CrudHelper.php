@@ -29,7 +29,7 @@ class CrudHelper {
                 'message' => $this->type.' fatch Successfully',
                 'data' => $data,
                 'type' => 'get '.$this->type
-            ]);
+            ],200);
         }
 
         $data = $this->model->all();
@@ -37,7 +37,7 @@ class CrudHelper {
             'message' => $this->type.' fatch Successfully',
             'data' => $data,
             'type' => 'get all '.$this->type
-        ]);
+        ],200);
 
     }
 
@@ -50,14 +50,13 @@ class CrudHelper {
                     'data' => $validat->validator->errors(),
                     'validation' => false,
                     'type' => 'store '.$this->type
-                ]);
+                ],400);
             }
         } catch (\Throwable $th) {
-            return json_encode([
+            return response()->json([
                 'message' => 'oops somthing went wrong !!!'
-            ]);
+            ],401);
         }
-
 
         $data = $validat->validator->validate();
 
@@ -78,7 +77,7 @@ class CrudHelper {
             'data' => $data,
             'validation' => true,
             'type' => 'store '.$this->type
-        ]);
+        ],200);
 
     }
 
@@ -95,7 +94,7 @@ class CrudHelper {
         $model->delete();
         return response()->json([
             'message' => $this->type.' Deleted Successfully'
-        ]);
+        ],200);
 
     }
 
@@ -108,14 +107,13 @@ class CrudHelper {
                     'data' => $validat->validator->errors(),
                     'validation' => false,
                     'type' => 'update '.$this->type
-                ]);
+                ],400);
             }
         } catch (\Throwable $th) {
-            return json_encode([
+            return response()->json([
                 'message' => 'oops somthing went wrong !!!'
-            ]);
+            ],401);
         }
-
 
         $data = $validat->validator->validate();
         if(!empty($this->images)){
@@ -136,7 +134,7 @@ class CrudHelper {
             'data' => $model,
             'validation' => true,
             'type' => 'update '.$this->type
-        ]);
+        ],200);
 
     }
 
