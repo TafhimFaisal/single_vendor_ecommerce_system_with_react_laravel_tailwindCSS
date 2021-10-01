@@ -4,9 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Http\Helper\CrudHelper;
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
+    private $user;
+    private $helper;
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->helper = new CrudHelper(
+            new Product,
+            ['image'],
+            'Product'
+        );
+        $this->user = auth()->user();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +30,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return $this->helper->get();
     }
 
     /**
@@ -35,7 +41,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $data = $request->all();
+        $data['user_id'] = $this->user->id;
+        return $this->helper->store(new ProductRequest($data));
+
     }
 
     /**
@@ -46,18 +56,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
+        return $this->helper->get($product->id);
     }
 
     /**
@@ -69,7 +68,13 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        $data = $request->all();
+        $data['user_id'] = $this->user->id;
+
+        return $this->helper->update(
+            $product,
+            new ProductRequest($data)
+        );
     }
 
     /**
@@ -80,6 +85,14 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+
+        if(auth()->user()->is_admin){
+            return $this->helper->destroy($product);
+        }
+
+        return json_encode([
+            'message' => 'oops somthing went wrong !!!'
+        ]);
+
     }
 }
