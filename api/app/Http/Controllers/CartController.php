@@ -3,10 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\product;
 use Illuminate\Http\Request;
+use App\Http\Requests\CartRequest;
+use App\Http\Helper\CrudHelper;
 
 class CartController extends Controller
 {
+    private $user;
+    private $helper;
+
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+        $this->helper = new CrudHelper(new Cart,[],'Cart');
+        $this->user = auth()->user();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,17 +27,14 @@ class CartController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $query = [];
+        if(!$this->user->is_admin){
+            array_push($query,
+                ['user_id','=',$this->user->id ],
+                ['order_id','=',null]
+            );
+        }
+        return $this->helper->get(null,$query);
     }
 
     /**
@@ -35,7 +45,29 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if(!$this->user->is_admin){
+            $data['user_id'] = $this->user->id;
+        }
+
+        return $this->helper->store(new CartRequest($data));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function add_to_cart(Request $request, Product $product)
+    {
+        $data = $request->all();
+
+        $data['product_id'] = $product->id;
+        $data['price'] = $product->price;
+        $data['product_name'] = $product->name;
+        $data['user_id'] = $this->user->id;
+
+        return $this->helper->store(new CartRequest($data));
     }
 
     /**
@@ -46,18 +78,13 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-        //
-    }
+        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
+            return response()->json([
+                'message' => 'oops somthing went wrong !!!'
+            ],401);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cart  $cart
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cart $cart)
-    {
-        //
+        return $this->helper->get($cart->id);
     }
 
     /**
@@ -69,7 +96,16 @@ class CartController extends Controller
      */
     public function update(Request $request, Cart $cart)
     {
-        //
+        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
+            return response()->json([
+                'message' => 'oops somthing went wrong !!!'
+            ],401);
+        }
+
+        return $this->helper->update(
+            $cart,
+            new CartRequest($request->all())
+        );
     }
 
     /**
@@ -80,6 +116,13 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
-        //
+        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
+            return response()->json([
+                'message' => 'oops somthing went wrong !!!'
+            ],401);
+        }
+
+        return $this->helper->destroy($cart);
     }
+
 }

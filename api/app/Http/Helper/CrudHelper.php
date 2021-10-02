@@ -21,10 +21,30 @@ class CrudHelper {
         $this->type     = $type;
     }
 
-    public function get($id = null)
+    public function changeModel($model)
     {
+        $this->model = $model;
+    }
+
+    public function changeType($type)
+    {
+        $this->type = $type;
+    }
+
+    public function get($id = null,array $query = [])
+    {
+
         if($id){
-            $data = $this->model->where('id',$id)->first();
+            $data = $this->model->find($id);
+            return response()->json([
+                'message' => $this->type.' fatch Successfully',
+                'data' => $data,
+                'type' => 'get '.$this->type
+            ],200);
+        }
+
+        if(!empty($query)){
+            $data = $this->model->where($query)->get();
             return response()->json([
                 'message' => $this->type.' fatch Successfully',
                 'data' => $data,
@@ -45,7 +65,7 @@ class CrudHelper {
     {
         try {
             if($validat->validator->fails()){
-                return json_encode([
+                return response()->json([
                     'message' => 'somthing went wrong',
                     'data' => $validat->validator->errors(),
                     'validation' => false,

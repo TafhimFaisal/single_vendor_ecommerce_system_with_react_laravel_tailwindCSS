@@ -12,7 +12,7 @@ class Cart extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name',
+        'product_name',
         'price',
         'qty',
         'product_id',

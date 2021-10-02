@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('address');
             $table->string('email');
             $table->string('phone');
-
+            $table->boolean('canceled')->default(false);
             $table->enum('status', [
                 'approved',
                 'rejected',

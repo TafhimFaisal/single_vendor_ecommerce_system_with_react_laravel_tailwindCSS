@@ -37,6 +37,8 @@ Route::group([
 
 });
 
-Route::resource('order',    CartController::class);
-Route::resource('cart',     OrderController::class);
+Route::resource('order',     OrderController::class);
+Route::resource('cart',    CartController::class);
 Route::resource('product',  ProductController::class);
+
+Route::post('add-to-cart/{product}',    'App\Http\Controllers\CartController@add_to_cart')->name('cart.add');
