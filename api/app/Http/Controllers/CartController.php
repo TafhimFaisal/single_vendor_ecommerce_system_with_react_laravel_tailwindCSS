@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\product;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\CartRequest;
 use App\Http\Helper\CrudHelper;
@@ -53,24 +54,6 @@ class CartController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function add_to_cart(Request $request, Product $product)
-    {
-        $data = $request->all();
-
-        $data['product_id'] = $product->id;
-        $data['price'] = $product->price;
-        $data['product_name'] = $product->name;
-        $data['user_id'] = $this->user->id;
-
-        return $this->helper->store(new CartRequest($data));
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\Models\Cart  $cart
@@ -78,12 +61,6 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->get($cart->id);
     }
 
@@ -96,12 +73,6 @@ class CartController extends Controller
      */
     public function update(Request $request, Cart $cart)
     {
-        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->update(
             $cart,
             new CartRequest($request->all())
@@ -116,13 +87,32 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
-        if(!$this->user->is_admin && $cart->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->destroy($cart);
+    }
+
+    public function get_cart_by_user(Request $request,User $user)
+    {
+        $query = [];
+        if($this->user->is_admin){
+            array_push($query,
+                ['user_id','=',$user->id ],
+                ['order_id','=',null]
+            );
+        }
+        return $this->helper->get(null,$query);
+    }
+
+
+    public function add_to_cart(Request $request, Product $product)
+    {
+        $data = $request->all();
+
+        $data['product_id'] = $product->id;
+        $data['price'] = $product->price;
+        $data['product_name'] = $product->name;
+        $data['user_id'] = $this->user->id;
+
+        return $this->helper->store(new CartRequest($data));
     }
 
 }

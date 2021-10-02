@@ -14,7 +14,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api');
+        $this->middleware('auth:api', ['except' => ['index']]);
         $this->helper = new CrudHelper(
             new Product,
             ['image'],
@@ -41,7 +41,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
         $data = $request->all();
         $data['user_id'] = $this->user->id;
         return $this->helper->store(new ProductRequest($data));

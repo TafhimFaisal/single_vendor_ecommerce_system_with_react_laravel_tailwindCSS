@@ -60,12 +60,6 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        if(!$this->user->is_admin && $order->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->get($order->id);
     }
 
@@ -89,12 +83,6 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        if(!$this->user->is_admin && $order->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->update(
             $order,
             new OrderRequest($request->all())
@@ -109,12 +97,6 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        if(!$this->user->is_admin){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
         return $this->helper->destroy($order);
     }
 

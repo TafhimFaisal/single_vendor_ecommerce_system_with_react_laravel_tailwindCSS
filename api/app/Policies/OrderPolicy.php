@@ -30,7 +30,7 @@ class OrderPolicy
      */
     public function view(User $user, Order $order)
     {
-        //
+        return $this->check($user,$order);
     }
 
     /**
@@ -53,7 +53,7 @@ class OrderPolicy
      */
     public function update(User $user, Order $order)
     {
-        //
+        return $this->check($user,$order);
     }
 
     /**
@@ -65,7 +65,7 @@ class OrderPolicy
      */
     public function delete(User $user, Order $order)
     {
-        //
+        return $this->check($user,$order);
     }
 
     /**
@@ -77,7 +77,7 @@ class OrderPolicy
      */
     public function restore(User $user, Order $order)
     {
-        //
+        return $this->check($user,$order);
     }
 
     /**
@@ -89,6 +89,15 @@ class OrderPolicy
      */
     public function forceDelete(User $user, Order $order)
     {
-        //
+        return $this->check($user,$order);
     }
+
+    public function check($user,$order)
+    {
+        if(!$user->is_admin && $order->user_id != $user->id){
+            return false;
+        }
+        return true;
+    }
+
 }
