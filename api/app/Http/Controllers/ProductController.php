@@ -41,6 +41,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create',Product::class);
         $data = $request->all();
         $data['user_id'] = $this->user->id;
         return $this->helper->store(new ProductRequest($data));
@@ -67,6 +68,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        $this->authorize('update',$product);
         $data = $request->all();
         $data['user_id'] = $this->user->id;
 
@@ -84,11 +86,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-
-        $response = !auth()->user()->is_admin
-                    ? response()->json(['message' => 'oops somthing went wrong !!!'],401)
-                    : $this->helper->destroy($product);
-
-        return $response;
+        $this->authorize('delete',$product);
+        return $this->helper->destroy($product);
     }
 }

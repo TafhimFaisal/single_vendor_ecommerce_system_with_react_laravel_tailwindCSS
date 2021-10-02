@@ -41,7 +41,7 @@ class OrderPolicy
      */
     public function create(User $user)
     {
-        //
+        return $user->carts->where('order_id',null)->count() > 0;
     }
 
     /**
@@ -65,7 +65,7 @@ class OrderPolicy
      */
     public function delete(User $user, Order $order)
     {
-        return $this->check($user,$order);
+        //
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\OrderRequest;
+use App\Http\Helper\CrudHelper;
 
 class OrderController extends Controller
 {
@@ -29,7 +30,9 @@ class OrderController extends Controller
     {
         $query = [];
         if(!$this->user->is_admin){
-            array_push($query,['user_id','=',$this->user->id]);
+            array_push($query,
+                ['user_id','=',$this->user->id]
+            );
         }
 
         return $this->helper->get(null,$query);
@@ -43,6 +46,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create',Order::class);
         $data = $request->all();
         if(!$this->user->is_admin){
             $data['user_id'] = $this->user->id;
@@ -60,6 +64,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        $this->authorize('view',$order);
         return $this->helper->get($order->id);
     }
 
@@ -83,9 +88,15 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
+        $this->authorize('update',$order);
+        $data = $request->all();
+        if(!$this->user->is_admin){
+            $data['user_id'] = $this->user->id;
+            unset($data['status']);
+        }
         return $this->helper->update(
             $order,
-            new OrderRequest($request->all())
+            new OrderRequest($data)
         );
     }
 
@@ -97,10 +108,13 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        return $this->helper->destroy($order);
+        return  !$this->user->is_admin
+                ? $this->cancel_order($order)
+                : $this->helper->destroy($order);
+
     }
 
-    public function cancel_order(Order $order)
+    public function cancel_order($order)
     {
 
         if(!$this->user->is_admin && $order->user_id != $this->user->id){
@@ -109,31 +123,17 @@ class OrderController extends Controller
             ],401);
         }
 
-        $order->canceled = true;
-        $order->save();
+        if( $order->status == 'processing' ){
+            $order->canceled = true;
+            $order->save();
+            return response()->json([
+                'message' => 'order canceled successfully.'
+            ],200);
+        }
 
         return response()->json([
-            'message' => 'order canceled successfully.'
-        ],200);
+            'message' => 'sorry you cannot cancel this order.'
+        ],401);
 
-    }
-
-    public function get_product_under_order(Request $request,Order $order)
-    {
-        $query = [];
-
-        $this->helper->changeModel(new Product);
-        $this->helper->changetype('Product');
-
-        if(!$this->user->is_admin){
-            array_push($query,['user_id','=',$this->user->id]);
-        }
-
-        if($this->user->is_admin){
-            array_push($query,['user_id','=',$request->user_id]);
-        }
-
-        array_push($query,['order_id','=',$order->id]);
-        return $this->helper->get(null,$query);
     }
 }

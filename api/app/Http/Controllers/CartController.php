@@ -46,10 +46,8 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        if(!$this->user->is_admin){
-            $data['user_id'] = $this->user->id;
-        }
-
+        $this->authorize('create',Cart::class);
+        $data = $request->all();
         return $this->helper->store(new CartRequest($data));
     }
 
@@ -61,6 +59,7 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
+        $this->authorize('view',$cart);
         return $this->helper->get($cart->id);
     }
 
@@ -73,10 +72,13 @@ class CartController extends Controller
      */
     public function update(Request $request, Cart $cart)
     {
-        return $this->helper->update(
-            $cart,
-            new CartRequest($request->all())
-        );
+        $this->authorize('update',$cart);
+        $data = $request->all();
+        if(!$this->user->is_admin){
+            $data['user_id'] = $this->user->id;
+        }
+
+        return $this->helper->update( $cart,new CartRequest($data));
     }
 
     /**
@@ -87,21 +89,9 @@ class CartController extends Controller
      */
     public function destroy(Cart $cart)
     {
+        $this->authorize('delete',$cart);
         return $this->helper->destroy($cart);
     }
-
-    public function get_cart_by_user(Request $request,User $user)
-    {
-        $query = [];
-        if($this->user->is_admin){
-            array_push($query,
-                ['user_id','=',$user->id ],
-                ['order_id','=',null]
-            );
-        }
-        return $this->helper->get(null,$query);
-    }
-
 
     public function add_to_cart(Request $request, Product $product)
     {
