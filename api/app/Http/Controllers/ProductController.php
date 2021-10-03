@@ -15,7 +15,7 @@ class ProductController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index']]);
+        $this->middleware('auth:api', ['except' => ['index','get_all_product']]);
         $this->helper = new CrudHelper(
             new Product,
             ['image'],
@@ -91,6 +91,12 @@ class ProductController extends Controller
         return $this->helper->destroy($product);
     }
 
+    /**
+     * search product by name.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
     public function search(Request $request)
     {
         $query = [];
@@ -98,6 +104,22 @@ class ProductController extends Controller
             ['name','LIKE',"%".$request->name."%"]
         );
         return $this->helper->get(null,$query);
+    }
+
+    /**
+     * get all product ASC or DSEC in order.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\Response
+     */
+    public function get_all_product(Request $request)
+    {
+        $data = Product::orderBy($request->orderby, $request->order)->get()->all();
+        return response()->json([
+            'message' => 'product fatch Successfully',
+            'data' => $data,
+            'type' => 'get product by '. $request->orderby . ' in ' . $request->order .'order'
+        ],200);
     }
 
 }

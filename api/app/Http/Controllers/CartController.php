@@ -93,6 +93,12 @@ class CartController extends Controller
         return $this->helper->destroy($cart);
     }
 
+    /**
+     * creare resource in store.
+     *
+     * @param  \App\Models\Cart  $cart
+     * @return \Illuminate\Http\Response
+     */
     public function add_to_cart(Request $request, Product $product)
     {
         $data = $request->all();
@@ -105,6 +111,13 @@ class CartController extends Controller
         return $this->helper->store(new CartRequest($data));
     }
 
+
+    /**
+     * get all carts associated with order.
+     *
+     * @param  \App\Models\Cart  $cart
+     * @return \Illuminate\Http\Response
+     */
     public function carts_under_order($order)
     {
         $query = [];
