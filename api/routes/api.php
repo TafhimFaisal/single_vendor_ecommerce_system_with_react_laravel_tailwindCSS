@@ -42,4 +42,4 @@ Route::resource('cart',    CartController::class);
 Route::resource('product',  ProductController::class);
 
 Route::post('add-to-cart/{product}',    'App\Http\Controllers\CartController@add_to_cart')->name('cart.add');
-Route::post('add-to-cart/{user}',       'App\Http\Controllers\CartController@get_cart_by_user')->name('cart.get');
+Route::get('carts-under-order/{order}',       'App\Http\Controllers\CartController@carts_under_order')->name('order.cart.get');

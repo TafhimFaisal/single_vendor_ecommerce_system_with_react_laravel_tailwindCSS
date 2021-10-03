@@ -10,6 +10,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class CartRequest
 {
     public $request;
+    public $storing;
 
     public function __construct(array $request)
     {

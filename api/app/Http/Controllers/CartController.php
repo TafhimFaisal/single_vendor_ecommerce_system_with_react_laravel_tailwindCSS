@@ -105,4 +105,16 @@ class CartController extends Controller
         return $this->helper->store(new CartRequest($data));
     }
 
+    public function carts_under_order($order)
+    {
+        $query = [];
+
+        array_push($query,['order_id','=',$order]);
+        if(!$this->user->is_admin){
+            array_push($query,['user_id','=',$this->user->id ]);
+        }
+
+        return $this->helper->get(null,$query);
+    }
+
 }

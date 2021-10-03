@@ -16,16 +16,15 @@ class CreateOrderLogsTable extends Migration
         Schema::create('order_logs', function (Blueprint $table) {
             $table->id();
 
-            $table->json('cart');
-            $table->json('order');
-
+            $table->json('cart')->nullable();
+            $table->json('order')->nullable();
             $table->string('action');
 
-            $table->unsignedBiginteger('cart_id')->nullable();
-            $table->foreign('cart_id')->references('id')->on('carts');
-
-            $table->unsignedBiginteger('order_id');
+            $table->unsignedBiginteger('order_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders');
+
+            $table->unsignedBiginteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
         });

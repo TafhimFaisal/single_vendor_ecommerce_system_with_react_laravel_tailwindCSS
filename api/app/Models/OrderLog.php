@@ -12,8 +12,8 @@ class OrderLog extends Model
         'cart',
         'order',
         'action',
-        'cart_id',
-        'order_id'
+        'order_id',
+        'user_id'
     ];
 
     /**

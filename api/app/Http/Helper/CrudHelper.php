@@ -75,6 +75,7 @@ class CrudHelper {
         } catch (\Throwable $th) {
             // dd($th->getMessage());
             return response()->json([
+                // 'message' => $th->getMessage()
                 'message' => 'oops somthing went wrong !!!'
             ],401);
         }

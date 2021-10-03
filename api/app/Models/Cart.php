@@ -45,7 +45,7 @@ class Cart extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function Order(): BelongsTo
+    public function Order()
     {
         return $this->belongsTo(Order::class);
     }

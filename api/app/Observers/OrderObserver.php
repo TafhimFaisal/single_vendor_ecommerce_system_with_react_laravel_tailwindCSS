@@ -3,6 +3,7 @@
 namespace App\Observers;
 use App\Models\Order;
 use App\Models\Cart;
+use App\Models\OrderLog;
 
 class OrderObserver
 {
@@ -21,6 +22,7 @@ class OrderObserver
             $cart->order_id = $order->id;
             $cart->save();
         }
+
     }
 
     /**
@@ -31,7 +33,7 @@ class OrderObserver
      */
     public function updated(Order $order)
     {
-        //
+        $this->createLog($order,"update order");
     }
 
     /**
@@ -42,7 +44,7 @@ class OrderObserver
      */
     public function deleted(Order $order)
     {
-        //
+        $this->createLog($order,"cancel order");
     }
 
     /**
@@ -66,4 +68,17 @@ class OrderObserver
     {
         //
     }
+
+    public function createLog($order,$message)
+    {
+        OrderLog::create([
+            'cart' => json_encode($order->carts),
+            'order'=> json_encode($order),
+            'action'=> $message,
+            'order_id' => $order->id,
+            'user_id' => auth()->user()->id
+        ]);
+    }
+
+
 }
