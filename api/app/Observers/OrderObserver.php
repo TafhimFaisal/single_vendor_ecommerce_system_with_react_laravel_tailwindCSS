@@ -51,7 +51,7 @@ class OrderObserver
      */
     public function deleted(Order $order)
     {
-        $this->createLog($order,"cancel order");
+        // $this->createLog($order,"cancel order");
     }
 
     /**

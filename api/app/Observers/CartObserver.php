@@ -36,7 +36,7 @@ class CartObserver
      */
     public function deleted(Cart $cart)
     {
-        $this->createLog($cart,"delete cart");
+        // $this->createLog($cart,"delete cart");
     }
 
     /**

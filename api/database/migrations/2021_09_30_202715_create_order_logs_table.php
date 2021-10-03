@@ -21,10 +21,10 @@ class CreateOrderLogsTable extends Migration
             $table->string('action');
 
             $table->unsignedBiginteger('order_id')->nullable();
-            $table->foreign('order_id')->references('id')->on('orders');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
 
             $table->unsignedBiginteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBiginteger('qty');
 
             $table->unsignedBiginteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

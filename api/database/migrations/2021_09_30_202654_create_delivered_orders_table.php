@@ -18,9 +18,10 @@ class CreateDeliveredOrdersTable extends Migration
 
             $table->json('cart');
             $table->json('order');
+            $table->json('user');
 
-            $table->unsignedBiginteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders');
+            // $table->unsignedBiginteger('order_id');
+            // $table->foreign('order_id')->references('id')->on('orders');
 
             $table->timestamps();
         });

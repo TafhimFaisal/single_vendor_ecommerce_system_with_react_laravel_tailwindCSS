@@ -12,7 +12,7 @@ class DeliveredOrder extends Model
     protected $fillable = [
         'cart',
         'order',
-        'order_id'
+        'user'
     ];
 
     /**
