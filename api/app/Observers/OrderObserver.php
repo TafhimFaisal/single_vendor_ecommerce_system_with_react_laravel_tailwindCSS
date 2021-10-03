@@ -5,6 +5,8 @@ use App\Models\Order;
 use App\Models\Cart;
 use App\Models\OrderLog;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\OrderPlaced;
 
 class OrderObserver
 {
@@ -16,6 +18,7 @@ class OrderObserver
      */
     public function created(Order $order)
     {
+        $Admin = User::where('email','admin@admin.com')->first();
         $user  = $order->user;
         $carts = $user->carts->where('order_id','=',null)->all();
 
@@ -23,6 +26,8 @@ class OrderObserver
             $cart->order_id = $order->id;
             $cart->save();
         }
+
+        $Admin->notify(new OrderPlaced($order,$user));
 
     }
 

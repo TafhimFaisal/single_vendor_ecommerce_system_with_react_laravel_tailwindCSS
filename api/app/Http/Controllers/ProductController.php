@@ -31,7 +31,6 @@ class ProductController extends Controller
      */
     public function index()
     {
-        move_delivared_order();
         return $this->helper->get();
     }
 
