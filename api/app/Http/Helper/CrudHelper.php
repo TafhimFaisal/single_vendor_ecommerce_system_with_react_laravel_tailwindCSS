@@ -188,4 +188,19 @@ class CrudHelper {
             unlink($image);
         }
     }
+
+    public function response(
+        $data,
+        $message = "Successfull",
+        $validation = true,
+        $action_type = "fatch",
+        $status_code = 200
+    ){
+        return response()->json([
+            'message'       => $message,
+            'data'          => $data,
+            'validation'    => $validation,
+            'type'          => $action_type
+        ],$status_code);
+    }
 }

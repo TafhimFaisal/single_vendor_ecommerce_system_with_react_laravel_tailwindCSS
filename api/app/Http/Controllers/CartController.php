@@ -74,11 +74,8 @@ class CartController extends Controller
     {
         $this->authorize('update',$cart);
         $data = $request->all();
-        if(!$this->user->is_admin){
-            $data['user_id'] = $this->user->id;
-        }
-
-        return $this->helper->update( $cart,new CartRequest($data));
+        $data['user_id'] = !$this->user->is_admin ? $this->user->id : $request->user_id ?? null;
+        return $this->helper->update( $cart,new CartRequest($data) );
     }
 
     /**
@@ -101,14 +98,13 @@ class CartController extends Controller
      */
     public function add_to_cart(Request $request, Product $product)
     {
-        $data = $request->all();
-
-        $data['product_id'] = $product->id;
-        $data['price'] = $product->price;
-        $data['product_name'] = $product->name;
-        $data['user_id'] = $this->user->id;
-
-        return $this->helper->store(new CartRequest($data));
+        return $this->helper->store(new CartRequest([
+            'product_id' => $product->id,
+            'price' => $product->price,
+            'product_name' => $product->name,
+            'user_id' => $this->user->id,
+            'qty' => $request->qty
+        ]));
     }
 
 
@@ -121,12 +117,10 @@ class CartController extends Controller
     public function carts_under_order($order)
     {
         $query = [];
-
         array_push($query,['order_id','=',$order]);
         if(!$this->user->is_admin){
             array_push($query,['user_id','=',$this->user->id ]);
         }
-
         return $this->helper->get(null,$query);
     }
 

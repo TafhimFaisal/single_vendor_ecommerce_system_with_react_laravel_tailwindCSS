@@ -16,11 +16,7 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['index','get_all_product']]);
-        $this->helper = new CrudHelper(
-            new Product,
-            ['image'],
-            'Product'
-        );
+        $this->helper = new CrudHelper( new Product, ['image'], 'Product' );
         $this->user = auth()->user();
     }
 
@@ -72,11 +68,7 @@ class ProductController extends Controller
         $this->authorize('update',$product);
         $data = $request->all();
         $data['user_id'] = $this->user->id;
-
-        return $this->helper->update(
-            $product,
-            new ProductRequest($data)
-        );
+        return $this->helper->update( $product, new ProductRequest($data) );
     }
 
     /**
@@ -100,9 +92,7 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $query = [];
-        array_push($query,
-            ['name','LIKE',"%".$request->name."%"]
-        );
+        array_push($query,['name','LIKE',"%".$request->name."%"]);
         return $this->helper->get(null,$query);
     }
 
@@ -115,11 +105,7 @@ class ProductController extends Controller
     public function get_all_product(Request $request)
     {
         $data = Product::orderBy($request->orderby, $request->order)->get()->all();
-        return response()->json([
-            'message' => 'product fatch Successfully',
-            'data' => $data,
-            'type' => 'get product by '. $request->orderby . ' in ' . $request->order .'order'
-        ],200);
+        return $this->helper->response($data);
     }
 
 }

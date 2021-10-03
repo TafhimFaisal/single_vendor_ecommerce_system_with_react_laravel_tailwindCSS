@@ -30,11 +30,8 @@ class OrderController extends Controller
     {
         $query = [];
         if(!$this->user->is_admin){
-            array_push($query,
-                ['user_id','=',$this->user->id]
-            );
+            array_push($query,['user_id','=',$this->user->id]);
         }
-
         return $this->helper->get(null,$query);
     }
 
@@ -102,10 +99,7 @@ class OrderController extends Controller
             }
         }
 
-        return $this->helper->update(
-            $order,
-            new OrderRequest($data)
-        );
+        return $this->helper->update( $order, new OrderRequest($data) );
     }
 
     /**
@@ -116,9 +110,9 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        return  !$this->user->is_admin
-                ? $this->cancel_order($order)
-                : $this->helper->destroy($order);
+        return !$this->user->is_admin
+               ? $this->cancel_order($order)
+               : $this->helper->destroy($order);
 
     }
 
@@ -139,11 +133,7 @@ class OrderController extends Controller
     {
         $this->authorize('isAdmin',$order);
         $data = $order->logs;
-        return response()->json([
-            'message' => 'order history fatched Successfully',
-            'data' => $data,
-            'type' => 'get order history'
-        ],200);
+        return $this->helper->response($data);
     }
 
 }
