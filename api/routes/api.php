@@ -43,3 +43,6 @@ Route::resource('product',  ProductController::class);
 
 Route::post('add-to-cart/{product}',    'App\Http\Controllers\CartController@add_to_cart')->name('cart.add');
 Route::get('carts-under-order/{order}',       'App\Http\Controllers\CartController@carts_under_order')->name('order.cart.get');
+
+Route::post('search/product',    'App\Http\Controllers\ProductController@search')->name('product.search');
+Route::post('order/history/{order}',    'App\Http\Controllers\OrderController@history')->name('order.history');

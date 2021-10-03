@@ -4,6 +4,7 @@ namespace App\Observers;
 use App\Models\Order;
 use App\Models\Cart;
 use App\Models\OrderLog;
+use App\Models\Product;
 
 class OrderObserver
 {
@@ -33,6 +34,12 @@ class OrderObserver
      */
     public function updated(Order $order)
     {
+        if($order->status == "delivered"){
+            foreach ($order->carts as $key => $cart) {
+                $this->update_product_qty($cart);
+            }
+        }
+
         $this->createLog($order,"update order");
     }
 
@@ -78,6 +85,16 @@ class OrderObserver
             'order_id' => $order->id,
             'user_id' => auth()->user()->id
         ]);
+    }
+
+    public function update_product_qty($cart)
+    {
+        $product = $cart->product;
+        $product_qty = $cart->product->qty;
+        $cart_qty = $cart->qty;
+
+        $product->qty = $product_qty - $cart_qty;
+        $product->save();
     }
 
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Cart;
+use App\Models\OrderLog;
 
 class Order extends Model
 {
@@ -36,6 +37,16 @@ class Order extends Model
     public function carts()
     {
         return $this->hasMany(Cart::class);
+    }
+
+    /**
+     * Get all of the logs for the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function logs()
+    {
+        return $this->hasMany(OrderLog::class);
     }
 
 

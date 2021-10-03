@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\OrderLog;
 use Illuminate\Http\Request;
 use App\Http\Helper\CrudHelper;
 use App\Http\Requests\ProductRequest;
@@ -89,4 +90,14 @@ class ProductController extends Controller
         $this->authorize('delete',$product);
         return $this->helper->destroy($product);
     }
+
+    public function search(Request $request)
+    {
+        $query = [];
+        array_push($query,
+            ['name','LIKE',"%".$request->name."%"]
+        );
+        return $this->helper->get(null,$query);
+    }
+
 }

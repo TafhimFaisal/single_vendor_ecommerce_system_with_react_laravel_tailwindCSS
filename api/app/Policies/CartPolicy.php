@@ -53,7 +53,17 @@ class CartPolicy
      */
     public function update(User $user, Cart $cart)
     {
-        return $this->check($user,$cart);
+        $isOk = $this->check($user,$cart);
+
+        if($isOk){
+            if(!$user->is_admin){
+                if($cart->order_id != null){
+                    return $cart->order->status == 'processing';
+                }
+            }
+        }
+
+        return $isOk;
     }
 
     /**

@@ -53,7 +53,14 @@ class OrderPolicy
      */
     public function update(User $user, Order $order)
     {
-        return $this->check($user,$order);
+        $isOk = $this->check($user,$order);
+        if($isOk){
+            if(!$user->is_admin){
+                return $order->status == 'processing';
+            }
+        }
+
+        return $isOk;
     }
 
     /**
@@ -98,6 +105,11 @@ class OrderPolicy
             return false;
         }
         return true;
+    }
+
+    public function isAdmin(User $user, Order $order)
+    {
+        return $user->is_admin;
     }
 
 }

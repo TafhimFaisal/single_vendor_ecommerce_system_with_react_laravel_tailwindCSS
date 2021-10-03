@@ -90,10 +90,18 @@ class OrderController extends Controller
     {
         $this->authorize('update',$order);
         $data = $request->all();
+
         if(!$this->user->is_admin){
             $data['user_id'] = $this->user->id;
             unset($data['status']);
         }
+
+        if(isset($data['status'])){
+            if($data['status'] == $order->status || $order->status == "delivered"){
+                unset($data['status']);
+            }
+        }
+
         return $this->helper->update(
             $order,
             new OrderRequest($data)
@@ -117,24 +125,25 @@ class OrderController extends Controller
     public function cancel_order($order)
     {
 
-        if(!$this->user->is_admin && $order->user_id != $this->user->id){
-            return response()->json([
-                'message' => 'oops somthing went wrong !!!'
-            ],401);
-        }
-
-        if( $order->status == 'processing' ){
-            $order->canceled = true;
-            $order->save();
-            return response()->json([
-                'message' => 'order canceled successfully.'
-            ],200);
-        }
-
+        $this->authorize('update',$order);
+        $order->canceled = true;
+        $order->save();
         return response()->json([
-            'message' => 'sorry you cannot cancel this order.'
-        ],401);
+            'message' => 'order canceled successfully.'
+        ],200);
 
+    }
+
+
+    public function history(Order $order)
+    {
+        $this->authorize('isAdmin',$order);
+        $data = $order->logs;
+        return response()->json([
+            'message' => 'order history fatched Successfully',
+            'data' => $data,
+            'type' => 'get order history'
+        ],200);
     }
 
 }
